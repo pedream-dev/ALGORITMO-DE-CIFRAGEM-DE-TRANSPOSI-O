@@ -1,0 +1,93 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
+
+// Função para limpar a chave e validar se é uma permutação válida
+bool validarChave(string chave) {
+    sort(chave.begin(), chave.end());
+    for (size_t i = 0; i < chave.length(); i++) {
+        if ((chave[i] - '0') != (int)(i + 1)) return false;
+    }
+    return true;
+}
+
+void criptografar() {
+    string mensagem, chave;
+    cout << "\nDigite a mensagem: ";
+    getline(cin >> ws, mensagem);
+    cout << "Digite a chave numerica (ex: 3124): ";
+    cin >> chave;
+
+    int numColunas = chave.length();
+    int numLinhas = ceil((double)mensagem.length() / numColunas);
+    
+    // Criar matriz e preencher com caracteres de preenchimento 'X'
+    vector<vector<char>> matriz(numLinhas, vector<char>(numColunas, 'X'));
+
+    int k = 0;
+    for (int i = 0; i < numLinhas; i++) {
+        for (int j = 0; j < numColunas; j++) {
+            if (k < mensagem.length())
+                matriz[i][j] = mensagem[k++];
+        }
+    }
+
+    cout << "Resultado Cifrado: ";
+    // Ler as colunas na ordem da chave (ajustando para índice 0)
+    for (char c : chave) {
+        int col = (c - '0') - 1; 
+        for (int i = 0; i < numLinhas; i++) {
+            cout << matriz[i][col];
+        }
+    }
+    cout << endl;
+}
+
+void descriptografar() {
+    string cifrada, chave;
+    cout << "\nDigite a mensagem cifrada: ";
+    getline(cin >> ws, cifrada);
+    cout << "Digite a chave original: ";
+    cin >> chave;
+
+    int numColunas = chave.length();
+    int numLinhas = cifrada.length() / numColunas;
+    vector<vector<char>> matriz(numLinhas, vector<char>(numColunas));
+
+    int k = 0;
+    // Preencher as colunas na ordem da chave
+    for (char c : chave) {
+        int col = (c - '0') - 1;
+        for (int i = 0; i < numLinhas; i++) {
+            matriz[i][col] = cifrada[k++];
+        }
+    }
+
+    cout << "Resultado Decifrado: ";
+    for (int i = 0; i < numLinhas; i++) {
+        for (int j = 0; j < numColunas; j++) {
+            cout << matriz[i][j];
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    int opcao;
+    do {
+        cout << "\n--- CIFRA DE TRANSPOSICAO ---" << endl;
+        cout << "1. Criptografar\n2. Descriptografar\n0. Sair\nEscolha: ";
+        cin >> opcao;
+
+        switch (opcao) {
+            case 1: criptografar(); break;
+            case 2: descriptografar(); break;
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
